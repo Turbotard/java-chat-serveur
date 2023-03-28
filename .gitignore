@@ -1,2 +1,24 @@
+# Mac
+*.DS_Store
+
+# Fichiers de build et de classe
+/bin/
+/build/
+/out/
 *.class
-**/.DS_Store
+
+# Fichiers du système
+*.log
+*.bak
+*.swp
+*~.nib
+
+# Fichiers de l'IDE
+/.idea/
+/.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
