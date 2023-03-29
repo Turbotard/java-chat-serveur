@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class ChatServer {
     private static ServerSocket serverSocket;
     private static ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
+    private static ArrayList<String> usernames = new ArrayList<String>();
 
     /**
      * Constructeur de la classe ChatServer.
@@ -38,18 +39,67 @@ public class ChatServer {
     }
 
     /**
-     * Supprime un client de la liste des clients connectés.
+     * 
+     * 
+     * @param username Le pseudo du client
+     * @return true si le pseudo est déjà pris, false sinon
+     */
+    public boolean isUsernameTaken(String username) {
+        return usernames.contains(username);
+    }
+
+    /**
+     * Ajoute un pseudo à la liste des pseudos.
+     * 
+     * @param username Le pseudo à ajouter
+     */
+    public void addUsername(String username) {
+        usernames.add(username);
+    }
+
+    /**
+     * Supprime un client de la liste des clients connectés et son pseudo de la
+     * liste des pseudos.
      *
      * @param client Le client à supprimer
      */
     public void removeClient(ClientHandler client) {
         clients.remove(client);
+        usernames.remove(client.getUsername());
     }
 
-    public void broadcastMessage(String message) {
+    /**
+     * Envoie un message à tous les clients connectés.
+     *
+     * @param senderUsername Le pseudo de l'expéditeur
+     * @param message        Le message à envoyer
+     */
+    public void broadcastMessage(ClientHandler sender, String message) {
         // Envoie le message à tous les clients connectés
         for (ClientHandler client : clients) {
-            client.sendMessage(message);
+
+            if (sender != client) {
+                String senderUsername = sender.getUsername();
+                client.sendMessage(senderUsername + " : " + message);
+            } else {
+                client.sendMessage("Vous : " + message);
+            }
+        }
+    }
+
+    /**
+     * Envoie un message à tous les clients connectés pour indiquer qu'un nouveau
+     * client s'est connecté.
+     * 
+     * @param clientName Le pseudo du nouveau client
+     */
+    public void broadcastNewClient(ClientHandler newClient) {
+        // Envoie le message à tous les clients connectés
+        for (ClientHandler client : clients) {
+            if (client != newClient) {
+                String newClientUsername = newClient.getUsername();
+                client.sendMessage(newClientUsername + " s'est connecté.");
+            }
         }
     }
 
@@ -82,6 +132,28 @@ public class ChatServer {
                 // Affiche la pile d'appels des méthodes qui ont conduit à l'exception
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Méthode pour arrêter le serveur et déconnecter tous les clients connectés.
+     */
+    public void stopServer() {
+        try {
+            // Fermez le ServerSocket
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+
+            // Déconnectez tous les clients connectés
+            synchronized (clients) {
+                for (ClientHandler client : clients) {
+                    client.disconnect();
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

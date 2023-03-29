@@ -11,11 +11,14 @@ import java.net.Socket;
  */
 public class ClientHandler implements Runnable {
     /* --------------------- Envoie les messages aux clients -------------------- */
-    Socket socket;
-    PrintWriter printWriter;
+    private Socket socket;
+    private PrintWriter printWriter;
     // Lis les messages reçus du client
-    BufferedReader bufferedReader;
-    ChatServer chatServer;
+    private BufferedReader bufferedReader;
+    // Instance du serveur qui gère les clients
+    private ChatServer chatServer;
+    // pseudo du client
+    private String username;
 
     /**
      * Constructeur de la classe ClientHandler.
@@ -36,6 +39,15 @@ public class ClientHandler implements Runnable {
             // Affiche la pile d'appels des méthodes qui ont conduit à l'exception
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Récupère le pseudo du client.
+     * 
+     * @return Le pseudo du client
+     */
+    public String getUsername() {
+        return username;
     }
 
     /**
@@ -94,6 +106,26 @@ public class ClientHandler implements Runnable {
      */
     @Override
     public void run() {
+        try {
+            // Lecture du pseudo envoyé par le client
+            username = bufferedReader.readLine();
+
+            // Vérifie si le pseudo est déjà utilisé
+            if (chatServer.isUsernameTaken(username)) {
+                sendMessage("Le pseudo " + username + " est déjà utilisé !");
+                disconnect();
+                return;
+            } else {
+                // Ajoute le pseudo à la liste des pseudos utilisés
+                chatServer.addUsername(username);
+                // Prévient les autres clients que le nouveau client s'est connecté
+                chatServer.broadcastNewClient(this);
+            }
+        } catch (IOException e) {
+            // Affiche la pile d'appels des méthodes qui ont conduit à l'exception
+            e.printStackTrace();
+        }
+
         // Le code à exécuter dans un nouveau thread sera placé ici
         try {
             while (true) {
@@ -114,7 +146,7 @@ public class ClientHandler implements Runnable {
                 }
 
                 // Envoie le message à tous les clients connectés
-                chatServer.broadcastMessage(message);
+                chatServer.broadcastMessage(this, message);
 
             }
         } catch (IOException e) {
