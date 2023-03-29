@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * Classe ClientHandler qui gère les connexions entrantes des clients.
+ */
 public class ClientHandler implements Runnable {
     /* --------------------- Envoie les messages aux clients -------------------- */
     Socket socket;
@@ -14,6 +17,12 @@ public class ClientHandler implements Runnable {
     BufferedReader bufferedReader;
     ChatServer chatServer;
 
+    /**
+     * Constructeur de la classe ClientHandler.
+     * 
+     * @param chatServer L'instance du serveur qui gère les clients
+     * @param socket     Le socket du client
+     */
     public ClientHandler(ChatServer chatServer, Socket socket) {
         this.chatServer = chatServer;
         this.socket = socket;
@@ -48,6 +57,9 @@ public class ClientHandler implements Runnable {
         printWriter.flush();
     }
 
+    /**
+     * Ferme les flux et le socket.
+     */
     public void disconnect() {
         try {
 
