@@ -91,7 +91,7 @@ public class ClientHandler implements Runnable {
             }
 
             // Prévient les autres clients que le client s'est déconnecté
-            chatServer.broadcastClientDisconnected(this);
+            chatServer.broadcastLeavingClient(this);
 
             // Supprime le ClientHandler de la liste des clients connectés
             chatServer.removeClient(this);
@@ -106,6 +106,8 @@ public class ClientHandler implements Runnable {
      * Exécute le code de gestion des messages dans un nouveau thread.
      * Cette méthode est appelée automatiquement lorsqu'un nouvel objet Thread est
      * démarré avec une instance de ClientHandler.
+     * 
+     * {@inheritDoc}
      */
     @Override
     public void run() {

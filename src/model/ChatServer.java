@@ -99,7 +99,7 @@ public class ChatServer {
             if (client != newClient) {
                 String newClientUsername = newClient.getUsername();
                 client.sendMessage(newClientUsername + " s'est connecté.");
-                System.out.println("Usernames : " + usernames);
+                System.out.println("Utilisateurs connectés : " + usernames);
             }
         }
     }
@@ -111,12 +111,13 @@ public class ChatServer {
      * 
      * @param clientName Le pseudo du client qui s'est déconnecté
      */
-    public void broadcastClientDisconnected(ClientHandler client) {
+    public void broadcastLeavingClient(ClientHandler client) {
         // Envoie le message à tous les clients connectés
         for (ClientHandler c : clients) {
             if (c != client) {
                 String clientUsername = client.getUsername();
                 c.sendMessage(clientUsername + " s'est déconnecté.");
+                System.out.println("Utilisateurs restants : " + usernames);
             }
         }
     }
