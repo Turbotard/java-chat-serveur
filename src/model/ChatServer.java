@@ -39,7 +39,7 @@ public class ChatServer {
     }
 
     /**
-     * 
+     * Vérifie si un pseudo est déjà pris par un autre client.
      * 
      * @param username Le pseudo du client
      * @return true si le pseudo est déjà pris, false sinon
@@ -99,6 +99,24 @@ public class ChatServer {
             if (client != newClient) {
                 String newClientUsername = newClient.getUsername();
                 client.sendMessage(newClientUsername + " s'est connecté.");
+                System.out.println("Usernames : " + usernames);
+            }
+        }
+    }
+
+    /**
+     * Envoie un message à tous les clients connectés pour indiquer qu'un client
+     * s'est
+     * déconnecté.
+     * 
+     * @param clientName Le pseudo du client qui s'est déconnecté
+     */
+    public void broadcastClientDisconnected(ClientHandler client) {
+        // Envoie le message à tous les clients connectés
+        for (ClientHandler c : clients) {
+            if (c != client) {
+                String clientUsername = client.getUsername();
+                c.sendMessage(clientUsername + " s'est déconnecté.");
             }
         }
     }

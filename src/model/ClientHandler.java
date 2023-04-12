@@ -90,6 +90,9 @@ public class ClientHandler implements Runnable {
                 socket.close();
             }
 
+            // Prévient les autres clients que le client s'est déconnecté
+            chatServer.broadcastClientDisconnected(this);
+
             // Supprime le ClientHandler de la liste des clients connectés
             chatServer.removeClient(this);
 
@@ -138,7 +141,7 @@ public class ClientHandler implements Runnable {
                 }
 
                 // Affiche le message reçu
-                System.out.println("Message reçu : " + message);
+                System.out.println("Message reçu de " + username + " : " + message);
 
                 // Si le message est /quit, le client est déconnecté
                 if (message.equals("/quit")) {
@@ -151,7 +154,8 @@ public class ClientHandler implements Runnable {
             }
         } catch (IOException e) {
             // Affiche la pile d'appels des méthodes qui ont conduit à l'exception
-            e.printStackTrace();
+            // e.printStackTrace();
+            System.out.println("Le client " + username + " s'est déconnecté.");
 
         } finally {
             disconnect();
